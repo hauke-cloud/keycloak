@@ -1,0 +1,6 @@
+apiVersion: v2
+name: keycloak
+description: A Helm chart for Kubernetes providing a Keycloak via OLM Keycloak operator and cloudnativ-pg storage
+type: application
+version: 0.0.1
+appVersion: "0.0.1"

@@ -1,0 +1,78 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "keycloak.fullname" . }}
+  labels:
+    {{- include "keycloak.labels" . | nindent 4 }}
+spec:
+  description: {{ .Values.database.description | quote }}
+  imageName: {{ .Values.database.image.repository }}:{{ .Values.database.image.tag | default "latest" }}
+  instances: {{ .Values.database.replicaCount | default 3 }}
+
+  storage:
+    size: {{ .Values.database.storage.size | default "10Gi" }}
+    {{- with .Values.database.storage.storageClass }}
+    storageClass: {{ . }}
+    {{- end }}
+
+  {{- with .Values.database.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  superuserSecret:
+    name: {{ .Values.database.superuserSecretName | default (printf "%s-superuser" (include "keycloak.name" .)) }}
+
+  {{- with .Values.database.bootstrap }}
+  bootstrap:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{ if and (hasKey .Values.database "backup") (hasKey .Values.database.backup "existingSecret") (hasKey .Values.database.backup.existingSecret "s3") (hasKey .Values.database.backup.existingSecret.s3 "assumeRole") }}
+  env:
+    - name: AWS_ROLE_ARN
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.database.backup.existingSecret.s3.assumeRole.name }}
+          key: {{ .Values.database.backup.existingSecret.s3.assumeRole.key }}
+  {{- end }}
+
+  enableSuperuserAccess: {{ .Values.database.enableSuperuserAccess | default false }}
+  primaryUpdateStrategy: {{ .Values.database.primaryUpdateStrategy | default "unsupervised" }}
+  enablePDB: {{ .Values.database.enablePDB | default true }}
+
+  affinity:
+    topologyKey: "kubernetes.io/hostname"
+
+  {{- with .Values.database.monitoring }}
+  monitoring:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.database.backup }}
+  backup:
+    {{- with .barmanObjectStore }}
+    barmanObjectStore:
+      {{- toYaml . | nindent 6 }}
+      {{- if and (hasKey $.Values.database "backup") (hasKey $.Values.database.backup "existingSecret") (hasKey $.Values.database.backup.existingSecret "s3") }}
+      s3Credentials:
+        {{- with $.Values.database.backup.existingSecret.s3.accessKeyId }}
+        accessKeyId:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with $.Values.database.backup.existingSecret.s3.secretAccessKey }}
+        secretAccessKey:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- with .retentionPolicy }}
+    retentionPolicy:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  {{- end }}
+
+  {{- with .Values.database.postgresql }}
+  postgresql:
+    {{- toYaml . | nindent 4}}
+  {{- end }}

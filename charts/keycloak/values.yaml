@@ -1,0 +1,81 @@
+# Default values for example.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+keycloak:
+  replicaCount: 1
+
+database:
+  description: "HA Postgres"
+
+  image:
+    repository: ghcr.io/cloudnative-pg/postgresql
+    tag: ""
+
+  replicaCount: 3
+
+  storage:
+    size: 10Gi
+    storageClass: ""
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      memory: 512Mi
+
+  enablePDB: true
+  primaryUpdateStrategy: unsupervised
+  enableSuperuserAccess: false
+
+  superuserSecret:
+    {}
+
+    # name: postgres-superuser
+
+  bootstrap:
+    initdb:
+      database: keycloak
+      owner: keycloak
+      secret:
+        name: keycloak-user
+      dataChecksums: true
+
+  monitoring:
+    enablePodMonitor: true
+
+  backup:
+    existingSecret:
+      s3:
+        accessKeyId:
+          name: cnpg-s3-creds
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: cnpg-s3-creds
+          key: AWS_SECRET_ACCESS_KEY
+        assumeRole:
+          name: cnpg-s3-creds
+          key: AWS_ASSUME_ROLE
+    barmanObjectStore:
+      destinationPath: "s3://bucket/path/to"
+      wal:
+        compression: gzip
+        maxParallel: 4
+    retentionPolicy: "7d"
+
+  postgresql:
+    parameters:
+      shared_buffers: "64MB"
+      max_wal_size: "256MB"
+      wal_compression: "on"
+      log_min_duration_statement: "500"
+    pg_hba:
+      - host all all 0.0.0.0/0 md5
+      - host all all ::0/0 md5
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
