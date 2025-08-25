@@ -5,6 +5,38 @@
 keycloak:
   replicaCount: 1
 
+  hostname:
+    admin: admin.id.example.com
+    hostname: id.example.com
+
+  ingress:
+    enabled: true
+    className: nginx
+    annotations: {}
+
+  # image:
+  #   repository:
+  #   tag: ""
+
+  # db:
+  #   host: postgres.svc.cluster.local
+  #   port: 5432
+  #   database: keycloak
+  #   schema: public
+  #   usernameSecret:
+  #     name: keycloak-user
+  #     key: username
+  #   passwordSecret:
+  #     name: keycloak-user
+  #     key: password
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      memory: 512Mi
+
 database:
   description: "HA Postgres"
 

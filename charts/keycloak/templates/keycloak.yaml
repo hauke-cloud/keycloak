@@ -1,80 +1,46 @@
-apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
 metadata:
-  name: {{ include "keycloak.fullname" . }}
+  name: {{ include "keycloak.name" . }}
   labels:
     {{- include "keycloak.labels" . | nindent 4 }}
 spec:
-  description: {{ .Values.database.description | quote }}
-  imageName: {{ .Values.database.image.repository }}:{{ .Values.database.image.tag | default "latest" }}
-  instances: {{ .Values.database.replicaCount | default 3 }}
+  {{- with .Values.keycloak.hostname }}
+  hostname:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
 
-  storage:
-    size: {{ .Values.database.storage.size | default "10Gi" }}
-    {{- with .Values.database.storage.storageClass }}
-    storageClass: {{ . }}
-    {{- end }}
+  {{- with .Values.keycloak.ingress }}
+  ingress:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
 
-  {{- with .Values.database.resources }}
+  {{- with .Values.keycloak.image }}
+  image: {{ .repository }}:{{ .tag | default .Chart.AppVersion }}
+  {{- end }}
+
+  instances: {{ .Values.keycloak.replicaCount | default 1 }}
+
+  {{- with .Values.keycloak.resources }}
   resources:
-    {{- toYaml . | nindent 4 }}
+  {{- toYaml . | nindent 4}}
   {{- end }}
 
-  superuserSecret:
-    name: {{ .Values.database.superuserSecretName | default (printf "%s-superuser" (include "keycloak.name" .)) }}
-
-  {{- with .Values.database.bootstrap }}
-  bootstrap:
-    {{- toYaml . | nindent 4 }}
+  db:
+  {{- if (hasKey .Values.keycloak "db") }}
+  {{- toYaml .Values.keycloak.db | nindent 4 }}
+  {{- else }}
+    database: {{ .Values.database.bootstrap.initdb.database | default "keycloak" }}
+    schema: public
+    host: {{ include "keycloak.name" . }}-rw.{{ .Release.Namespace }}.svc.cluster.local
+    port: 5432
+    passwordSecret:
+      name: {{ include "keycloak.name" . }}-app
+      key: password
+      optional: false
+    usernameSecret:
+      name: {{ include "keycloak.name" . }}-app
+      key: username
+      optional: false
   {{- end }}
 
-  {{ if and (hasKey .Values.database "backup") (hasKey .Values.database.backup "existingSecret") (hasKey .Values.database.backup.existingSecret "s3") }}
-  projectedVolumeTemplate:
-    sources:
-      - secret:
-          name: {{ .Values.database.backup.existingSecret.s3.name }}
-          items:
-            - key: {{ .Values.database.backup.existingSecret.s3.credentialsKey | default "credentials" }}
-              path: credentials
-            - key: {{ .Values.database.backup.existingSecret.s3.configKey | default "config" }}
-              path: config
-
-  env:
-    - name: AWS_SHARED_CREDENTIALS_FILE
-      value: /projected/credentials
-    - name: AWS_CONFIG_FILE
-      value: /projected/config
-    - name: AWS_PROFILE
-      value: {{ .Values.database.backup.existingSecret.s3.profileName | default "cnpg" }}
-  {{- end }}
-
-  enableSuperuserAccess: {{ .Values.database.enableSuperuserAccess | default false }}
-  primaryUpdateStrategy: {{ .Values.database.primaryUpdateStrategy | default "unsupervised" }}
-  enablePDB: {{ .Values.database.enablePDB | default true }}
-
-  affinity:
-    topologyKey: "kubernetes.io/hostname"
-
-  {{- with .Values.database.monitoring }}
-  monitoring:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-
-  {{- with .Values.database.backup }}
-  backup:
-    {{- with .barmanObjectStore }}
-    barmanObjectStore:
-      {{- toYaml . | nindent 6 }}
-      s3Credentials:
-        inheritFromIAMRole: true
-    {{- end }}
-    {{- with .retentionPolicy }}
-    retentionPolicy:
-      {{- toYaml . | nindent 6 }}
-    {{- end }}
-  {{- end }}
-
-  {{- with .Values.database.postgresql }}
-  postgresql:
-    {{- toYaml . | nindent 4}}
-  {{- end }}
