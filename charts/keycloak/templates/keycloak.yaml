@@ -35,11 +35,11 @@ spec:
     host: {{ include "keycloak.name" . }}-db-rw.{{ .Release.Namespace }}.svc.cluster.local
     port: 5432
     passwordSecret:
-      name: {{ include "keycloak.name" . }}-app
+      name: {{ include "keycloak.name" . }}-db-app
       key: password
       optional: false
     usernameSecret:
-      name: {{ include "keycloak.name" . }}-app
+      name: {{ include "keycloak.name" . }}-db-app
       key: username
       optional: false
   {{- end }}
