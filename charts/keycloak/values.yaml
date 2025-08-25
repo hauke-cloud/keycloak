@@ -38,8 +38,8 @@ database:
     initdb:
       database: keycloak
       owner: keycloak
-      secret:
-        name: keycloak-user
+      # secret:
+      #   name: keycloak-user
       dataChecksums: true
 
   monitoring:
