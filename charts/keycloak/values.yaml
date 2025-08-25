@@ -10,7 +10,7 @@ database:
 
   image:
     repository: ghcr.io/cloudnative-pg/postgresql
-    tag: ""
+    tag: 15.0
 
   replicaCount: 3
 
