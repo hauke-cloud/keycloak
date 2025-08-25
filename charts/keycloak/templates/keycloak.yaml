@@ -28,13 +28,24 @@ spec:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 
-  {{ if and (hasKey .Values.database "backup") (hasKey .Values.database.backup "existingSecret") (hasKey .Values.database.backup.existingSecret "s3") (hasKey .Values.database.backup.existingSecret.s3 "assumeRole") }}
+  {{ if and (hasKey .Values.database "backup") (hasKey .Values.database.backup "existingSecret") (hasKey .Values.database.backup.existingSecret "s3") }}
+  projectedVolumeTemplate:
+    sources:
+      - secret:
+          name: {{ .Values.database.backup.existingSecret.s3.name }}
+          items:
+            - key: {{ .Values.database.backup.existingSecret.s3.credentialsKey | default "credentials" }}
+              path: credentials
+            - key: {{ .Values.database.backup.existingSecret.s3.configKey | default "config" }}
+              path: config
+
   env:
-    - name: AWS_ROLE_ARN
-      valueFrom:
-        secretKeyRef:
-          name: {{ .Values.database.backup.existingSecret.s3.assumeRole.name }}
-          key: {{ .Values.database.backup.existingSecret.s3.assumeRole.key }}
+    - name: AWS_SHARED_CREDENTIALS_FILE
+      value: /projected/credentials
+    - name: AWS_CONFIG_FILE
+      value: /projected/config
+    - name: AWS_PROFILE
+      value: {{ .Values.database.backup.existingSecret.s3.profileName | default "cnpg" }}
   {{- end }}
 
   enableSuperuserAccess: {{ .Values.database.enableSuperuserAccess | default false }}
@@ -54,17 +65,6 @@ spec:
     {{- with .barmanObjectStore }}
     barmanObjectStore:
       {{- toYaml . | nindent 6 }}
-      {{- if and (hasKey $.Values.database "backup") (hasKey $.Values.database.backup "existingSecret") (hasKey $.Values.database.backup.existingSecret "s3") }}
-      s3Credentials:
-        {{- with $.Values.database.backup.existingSecret.s3.accessKeyId }}
-        accessKeyId:
-        {{- toYaml . | nindent 10 }}
-        {{- end }}
-        {{- with $.Values.database.backup.existingSecret.s3.secretAccessKey }}
-        secretAccessKey:
-        {{- toYaml . | nindent 10 }}
-        {{- end }}
-      {{- end }}
     {{- end }}
     {{- with .retentionPolicy }}
     retentionPolicy:

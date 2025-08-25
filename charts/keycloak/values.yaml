@@ -48,15 +48,10 @@ database:
   backup:
     existingSecret:
       s3:
-        accessKeyId:
-          name: cnpg-s3-creds
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: cnpg-s3-creds
-          key: AWS_SECRET_ACCESS_KEY
-        assumeRole:
-          name: cnpg-s3-creds
-          key: AWS_ASSUME_ROLE
+        name: cnpg-s3-creds
+        credentialsKey: credentials
+        configKey: config
+        profileName: cnpg
     barmanObjectStore:
       destinationPath: "s3://bucket/path/to"
       wal:
