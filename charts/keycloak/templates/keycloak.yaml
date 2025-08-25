@@ -65,6 +65,8 @@ spec:
     {{- with .barmanObjectStore }}
     barmanObjectStore:
       {{- toYaml . | nindent 6 }}
+      s3Credentials:
+        inheritFromIAMRole: true
     {{- end }}
     {{- with .retentionPolicy }}
     retentionPolicy:
