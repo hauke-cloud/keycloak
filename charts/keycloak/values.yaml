@@ -16,7 +16,7 @@ keycloak:
 
   http:
     httpEnabled: false
-    tlsSecret: keycloak
+    tlsSecret: tls-keycloak
 
   # Use Cert-Manager to manage the Keycloak certificate
   certificate:
