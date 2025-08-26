@@ -10,10 +10,8 @@ spec:
   {{- toYaml . | nindent 4 }}
   {{- end }}
 
-  {{- with .Values.keycloak.ingress }}
   ingress:
-  {{- toYaml . | nindent 4 }}
-  {{- end }}
+    enabled: false
 
   {{- with .Values.keycloak.image }}
   image: {{ .repository }}:{{ .tag | default .Chart.AppVersion }}

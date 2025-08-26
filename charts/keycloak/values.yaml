@@ -23,7 +23,7 @@ keycloak:
     enabled: true
 
     issuerRef:
-      name: isser
+      name: issuer
       kind: ClusterIssuer
       group: cert-manager.io
 
