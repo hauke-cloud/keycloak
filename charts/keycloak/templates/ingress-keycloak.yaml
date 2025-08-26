@@ -2,8 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  {{- with .Values.keycloak.ingress.annotations }}
   annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{ regexReplaceAll "http[s]*://" .Values.keycloak.hostname.hostname "" }}
+  {{- with .Values.keycloak.ingress.annotations }}
   {{- toYaml . | nindent 4 }}
   {{- end }}
   name: {{ include "keycloak.name" . }}
@@ -29,8 +30,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  {{- with .Values.keycloak.ingress.annotations }}
   annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{ regexReplaceAll "http[s]*://" .Values.keycloak.hostname.admin "" }}
+  {{- with .Values.keycloak.ingress.annotations }}
   {{- toYaml . | nindent 4 }}
   {{- end }}
   name: {{ include "keycloak.name" . }}-admin
