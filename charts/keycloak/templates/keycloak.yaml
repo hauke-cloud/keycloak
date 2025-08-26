@@ -28,6 +28,7 @@ spec:
   {{- if (hasKey .Values.keycloak "db") }}
   {{- toYaml .Values.keycloak.db | nindent 4 }}
   {{- else }}
+    vendor: postgres
     database: {{ .Values.database.bootstrap.initdb.database | default "keycloak" }}
     schema: public
     host: {{ include "keycloak.name" . }}-db-rw.{{ .Release.Namespace }}.svc.cluster.local
