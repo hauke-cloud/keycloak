@@ -26,6 +26,8 @@ spec:
     - hosts:
       - {{ regexReplaceAll "http[s]*://" .Values.keycloak.hostname.hostname "" }}
       secretName: tls-{{ include "keycloak.name" . }}
+{{- end }}
+{{- if and (hasKey .Values.keycloak.ingress "enabled") (.Values.keycloak.ingress.enabled) (.Values.keycloak.hostname.admin) (not (eq .Values.keycloak.hostname.hostname .Values.keycloak.hostname.admin)) }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
