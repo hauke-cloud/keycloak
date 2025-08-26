@@ -7,9 +7,10 @@ metadata:
     {{- include "keycloak.labels" . | nindent 4 }}
 spec:
   commonName: {{ .Values.keycloak.hostname.hostname | default (printf "%s.%s.svc.cluster.local" (include "keycloak.name" .) .Release.Namespace) }}
-
   dnsNames:
   - {{ .Values.keycloak.hostname.hostname | default (printf "%s.%s.svc.cluster.local" (include "keycloak.name" .) .Release.Namespace) }}
+
+  secretName: {{ .Values.keycloak.certificate.secretName | default (printf "%s-tls" (include "keycloak.name" .)) }}
 
   isCA: {{ .Values.keycloak.certificate.isCA | default false }}
   duration: {{ .Values.keycloak.certificate.duration | default "2160h" }}
@@ -22,6 +23,11 @@ spec:
 
   {{- with .Values.keycloak.certificate.usages }}
   usages:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.keycloak.certificate.issuerRef }}
+  issuerRef:
   {{- toYaml . | nindent 4 }}
   {{- end }}
   {{- end }}
