@@ -67,6 +67,8 @@ keycloak:
   #   - name: log-level
   #     value: "INFO:org.keycloak:TRACE"
 
+  unsupported: {}
+
 database:
   description: "HA Postgres"
 
