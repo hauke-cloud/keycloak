@@ -1,0 +1,27 @@
+{{- if .Values.keycloak.certificate.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "keycloak.name" . }}
+  labels:
+    {{- include "keycloak.labels" . | nindent 4 }}
+spec:
+  commonName: {{ .Values.keycloak.hostname.hostname | default (printf "%s.%s.svc.cluster.local" (include "keycloak.name" .) .Release.Namespace) }}
+
+  dnsNames:
+  - {{ .Values.keycloak.hostname.hostname | default (printf "%s.%s.svc.cluster.local" (include "keycloak.name" .) .Release.Namespace) }}
+
+  isCA: {{ .Values.keycloak.certificate.isCA | default false }}
+  duration: {{ .Values.keycloak.certificate.duration | default "2160h" }}
+  renewBefore: {{ .Values.keycloak.certificate.renewBefore | default "360h" }}
+
+  {{- with .Values.keycloak.certificate.privateKey }}
+  privateKey:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.keycloak.certificate.usages }}
+  usages:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}

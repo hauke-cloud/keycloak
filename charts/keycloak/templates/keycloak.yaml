@@ -44,3 +44,7 @@ spec:
       optional: false
   {{- end }}
 
+  {{- with .Values.keycloak.http }}
+  http:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}

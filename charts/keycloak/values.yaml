@@ -14,6 +14,25 @@ keycloak:
     className: nginx
     annotations: {}
 
+  http:
+    httpEnabled: false
+    tlsSecret: keycloak
+
+  # Use Cert-Manager to manage the Keycloak certificate
+  certificate:
+    enabled: true
+
+    duration: 2160h
+    renewBefore: 360h
+    isCA: false
+    usages:
+      - server auth
+      - client auth
+    privateKey:
+      algorithm: RSA
+      encoding: PKCS11
+      size: 4096
+
   # image:
   #   repository:
   #   tag: ""
