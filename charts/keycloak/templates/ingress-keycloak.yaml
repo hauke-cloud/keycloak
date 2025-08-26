@@ -21,7 +21,7 @@ spec:
             port:
               name: https
         pathType: ImplementationSpecific
-    tls:
-      - hosts: {{ regexReplaceAll "http[s]*://" .Values.keycloak.hostname.hostname "" }}
-        secretName: tls-{{ include "keycloak.name" . }}
+  tls:
+    - hosts: {{ regexReplaceAll "http[s]*://" .Values.keycloak.hostname.hostname "" }}
+      secretName: tls-{{ include "keycloak.name" . }}
 {{- end }}
