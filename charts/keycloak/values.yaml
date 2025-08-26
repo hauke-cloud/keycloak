@@ -63,6 +63,10 @@ keycloak:
     limits:
       memory: 512Mi
 
+  additionalOptions:
+    - name: log-level
+      value: "INFO:org.keycloak:TRACE"
+
 database:
   description: "HA Postgres"
 
