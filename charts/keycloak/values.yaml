@@ -30,7 +30,7 @@ keycloak:
       - client auth
     privateKey:
       algorithm: RSA
-      encoding: PKCS11
+      encoding: PKCS1
       size: 4096
 
   # image:
