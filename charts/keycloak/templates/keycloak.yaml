@@ -17,7 +17,7 @@ spec:
   image: {{ .repository }}:{{ .tag | default .Chart.AppVersion }}
   {{- end }}
 
-  {{- with .imagePullSecrets }}
+  {{- with .Values.keycloak.imagePullSecrets }}
   imagePullSecrets:
   {{- toYaml . | nindent 4 }}
   {{- end }}
