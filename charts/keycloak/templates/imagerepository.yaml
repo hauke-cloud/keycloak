@@ -9,7 +9,7 @@ spec:
   interval: {{ .fluxImageObserver.interval }}
   {{- with .imagePullSecret }}
   secretRef:
-  - name: {{ . }}
+    name: {{ . }}
   {{- end }}
 {{- end }}
 {{- end }}
