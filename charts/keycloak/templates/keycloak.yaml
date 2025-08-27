@@ -72,12 +72,12 @@ spec:
             image: {{ .image.repository }}:{{ .image.tag }} {{ if .fluxImageObserver.enabled }} # {"$imagepolicy": "{{ (and (hasKey .fluxImageObserver "overrideImagePolicy") (.fluxImageObserver.overrideImagePolicy)) | default (printf "%s:%s" $.Release.Namespace "theme-downloader") }}"} {{ end }}
             volumeMounts:
               - name: themes
-                mountPath: /opt/keycloak/themes
+                mountPath: /opt/keycloak/providers
         containers:
           - name: keycloak
             volumeMounts:
               - name: themes
-                mountPath: /opt/keycloak/themes
+                mountPath: /opt/keycloak/providers
         volumes:
           - name: themes
             emptyDir: {}
