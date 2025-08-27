@@ -17,6 +17,11 @@ spec:
   image: {{ .repository }}:{{ .tag | default .Chart.AppVersion }}
   {{- end }}
 
+  {{- with .imagePullSecrets }}
+  imagePullSecrets:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+
   instances: {{ .Values.keycloak.replicaCount | default 1 }}
 
   {{- with .Values.keycloak.resources }}
@@ -62,10 +67,6 @@ spec:
     {{- if .enabled }}
     podTemplate:
       spec:
-        {{- with .imagePullSecret }}
-        imagePullSecrets:
-        - name: {{ . }}
-        {{- end }}
         initContainers:
           - name: theme-downloader
             image: {{ .image.repository }}:{{ .image.tag }} {{ if .fluxImageObserver.enabled }} # {"$imagepolicy": "{{ (and (hasKey .fluxImageObserver "overrideImagePolicy") (.fluxImageObserver.overrideImagePolicy)) | default (printf "%s:%s" $.Release.Namespace "theme-downloader") }}"} {{ end }}

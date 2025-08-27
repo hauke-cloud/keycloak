@@ -44,6 +44,9 @@ keycloak:
   #   repository:
   #   tag: ""
 
+  imagePullSecrets: []
+  #  - name: pull-secret-registry
+
   # db:
   #   host: postgres.svc.cluster.local
   #   port: 5432
@@ -74,9 +77,6 @@ keycloak:
     image:
       repository: ghcr.io/hauke-cloud/library/keycloak-themes
       tag: 1.0.0
-
-    imagePullSecret: []
-    #  - name: pull-secret-registry
 
     fluxImageObserver:
       enabled: false
