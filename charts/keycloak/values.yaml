@@ -78,15 +78,6 @@ keycloak:
       repository: ghcr.io/hauke-cloud/library/keycloak-themes
       tag: 1.0.0
 
-    fluxImageObserver:
-      enabled: false
-      interval: 1m
-      # imagePullSecret: pull-secret
-      policy:
-        semver:
-          range: 1.*
-      # overrideImagePolicy: keycloak:theme-downloader
-
   unsupported: {}
 
 database:
