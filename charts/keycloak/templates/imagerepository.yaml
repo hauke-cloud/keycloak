@@ -7,7 +7,7 @@ metadata:
 spec:
   image: {{ .image.repository }}
   interval: {{ .fluxImageObserver.interval }}
-  {{- with .imagePullSecret }}
+  {{- with .fluxImageObserver.imagePullSecret }}
   secretRef:
     name: {{ . }}
   {{- end }}

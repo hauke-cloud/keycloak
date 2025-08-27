@@ -81,6 +81,7 @@ keycloak:
     fluxImageObserver:
       enabled: false
       interval: 1m
+      # imagePullSecret: pull-secret
       policy:
         semver:
           range: 1.*
