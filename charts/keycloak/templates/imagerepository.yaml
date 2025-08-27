@@ -1,0 +1,15 @@
+{{- with .Values.keycloak.themeDownloader }}
+{{- if and .enabled (hasKey . "fluxImageObserver") .fluxImageObserver.enabled }}
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: theme-downloader
+spec:
+  image: {{ .image.repository }}
+  interval: {{ .fluxImageObserver.interval }}
+  {{- with .imagePullSecret }}
+  secretRef:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}

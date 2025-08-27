@@ -53,7 +53,29 @@ spec:
   {{- toYaml . | nindent 4 }}
   {{- end }}
 
-  {{- with .Values.keycloak.unsupported }}
+  {{- if or (and (hasKey .Values.keycloak "unsupported") (.Values.keycloak.unsupported)) (and (hasKey .Values.keycloak "themeDownloader") (hasKey .Values.keycloak.themeDownloader "enabled") (.Values.keycloak.themeDownloader.enabled)) }}
   unsupported:
-  {{- toYaml . | nindent 4 }}
+    {{- with .Values.keycloak.unsupported }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.keycloak.themeDownloader }}
+    {{- if .enabled }}
+    podTemplate:
+      spec:
+        initContainers:
+          - name: theme-downloader
+            image: {{ .image.repository }}:{{ .image.tag }} {{ if .fluxImageObserver.enabled }} # {"$imagepolicy": "{{ (and (hasKey .fluxImageObserver "overrideImagePolicy") (.fluxImageObserver.overrideImagePolicy)) | default (printf "%s:%s" $.Release.Namespace "theme-downloader") }}"} {{ end }}
+            volumeMounts:
+              - name: themes
+                mountPath: /opt/keycloak/themes
+        containers:
+          - name: keycloak
+            volumeMounts:
+              - name: themes
+                mountPath: /opt/keycloak/themes
+        volumes:
+          - name: themes
+            emptyDir: {}
+    {{- end }}
+    {{- end }}
   {{- end }}
