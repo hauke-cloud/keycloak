@@ -9,7 +9,7 @@ spec:
   interval: {{ .fluxImageObserver.interval }}
   {{- with .imagePullSecret }}
   secretRef:
-  {{- toYaml . | nindent 4 }}
+  - name: {{ . }}
   {{- end }}
 {{- end }}
 {{- end }}
