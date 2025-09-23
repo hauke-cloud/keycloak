@@ -11,7 +11,7 @@
 <img src="https://raw.githubusercontent.com/hauke-cloud/.github/main/resources/img/organisation-logo-small.png" alt="hauke.cloud logo" width="109" height="123" align="right">
 
 
-Helm chart to Keycloak manifest for the OLM Keycloak operator and storage via cloudnative-pg.
+Helm chart providing Keycloak manifest for the OLM Keycloak operator and storage via cloudnative-pg.
 
 This chart offers you:
 - Production ready Keycloak deployment
