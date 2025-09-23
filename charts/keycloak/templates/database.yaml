@@ -1,3 +1,4 @@
+{{- if .Values.database.enabled }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -78,3 +79,4 @@ spec:
   postgresql:
     {{- toYaml . | nindent 4}}
   {{- end }}
+{{- end }}

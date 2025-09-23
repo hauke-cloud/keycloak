@@ -81,6 +81,8 @@ keycloak:
   unsupported: {}
 
 database:
+  enabled: false
+
   description: "HA Postgres"
 
   image:
