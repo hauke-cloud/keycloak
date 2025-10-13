@@ -123,6 +123,9 @@ database:
     enablePodMonitor: true
 
   backup:
+    schedules:
+      - name: hourly
+        schedule: "0 * * * * *"
     existingSecret:
       s3:
         name: cnpg-s3-creds

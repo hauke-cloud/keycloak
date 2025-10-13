@@ -1,0 +1,14 @@
+{{- if .Values.database.enabled }}
+{{- range .Values.database.backup.schedules }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: {{ include "keycloak.name" $ }}-{{ .name }}
+spec:
+  schedule: "{{ .schedule }}"
+  backupOwnerReference: {{ .backupOwnerReference | default "self" }}
+  cluster:
+    name: {{ include "keycloak.name" $ }}
+{{- end }}
+{{- end }}
