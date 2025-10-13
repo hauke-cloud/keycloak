@@ -9,6 +9,6 @@ spec:
   schedule: "{{ .schedule }}"
   backupOwnerReference: {{ .backupOwnerReference | default "self" }}
   cluster:
-    name: {{ include "keycloak.name" $ }}
+    name: {{ include "keycloak.name" $ }}-db
 {{- end }}
 {{- end }}
