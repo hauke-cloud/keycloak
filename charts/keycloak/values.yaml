@@ -125,7 +125,7 @@ database:
   backup:
     schedules:
       - name: hourly
-        schedule: "0 * * * * *"
+        schedule: "0 0 * * * *"
     existingSecret:
       s3:
         name: cnpg-s3-creds
