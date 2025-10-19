@@ -16,7 +16,7 @@ keycloak:
 
   http:
     httpEnabled: false
-    tlsSecret: tls-keycloak
+    tlsSecret: keycloak-tls
 
   # Use Cert-Manager to manage the Keycloak certificate
   certificate:
@@ -27,7 +27,7 @@ keycloak:
       kind: ClusterIssuer
       group: cert-manager.io
 
-    secretName: tls-keycloak
+    secretName: keycloak
 
     duration: 2160h
     renewBefore: 360h
