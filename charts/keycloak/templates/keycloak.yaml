@@ -60,9 +60,11 @@ spec:
 
   {{- if or (and (hasKey .Values.keycloak "unsupported") (.Values.keycloak.unsupported)) (and (hasKey .Values.keycloak "themeDownloader") (hasKey .Values.keycloak.themeDownloader "enabled") (.Values.keycloak.themeDownloader.enabled)) }}
   unsupported:
+    {{- if .Values.keycloak.unsupported }}
     {{- with .Values.keycloak.unsupported }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+    {{- else }}
     {{- with .Values.keycloak.themeDownloader }}
     {{- if .enabled }}
     podTemplate:
@@ -81,6 +83,7 @@ spec:
         volumes:
           - name: themes
             emptyDir: {}
+    {{- end }}
     {{- end }}
     {{- end }}
   {{- end }}
