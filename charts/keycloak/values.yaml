@@ -6,8 +6,8 @@ keycloak:
   replicaCount: 1
 
   hostname:
-    admin: admin.id.example.com
-    hostname: id.example.com
+    admin: https://admin.id.example.com
+    hostname: https://id.example.com
 
   ingress:
     enabled: true

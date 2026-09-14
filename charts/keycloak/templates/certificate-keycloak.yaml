@@ -6,9 +6,15 @@ metadata:
   labels:
     {{- include "keycloak.labels" . | nindent 4 }}
 spec:
-  commonName: {{ .Values.keycloak.hostname.hostname | default (printf "%s.%s.svc.cluster.local" (include "keycloak.name" .) .Release.Namespace) }}
+  {{- $defaultHost := printf "%s.%s.svc.cluster.local" (include "keycloak.name" .) .Release.Namespace }}
+  {{- $host := include "keycloak.host" (.Values.keycloak.hostname.hostname | default $defaultHost) }}
+  {{- $adminHost := include "keycloak.host" (.Values.keycloak.hostname.admin | default "") }}
+  commonName: {{ $host }}
   dnsNames:
-  - {{ .Values.keycloak.hostname.hostname | default (printf "%s.%s.svc.cluster.local" (include "keycloak.name" .) .Release.Namespace) }}
+  - {{ $host }}
+  {{- if and $adminHost (ne $adminHost $host) }}
+  - {{ $adminHost }}
+  {{- end }}
 
   secretName: {{ .Values.keycloak.certificate.secretName | default (printf "%s-tls" (include "keycloak.name" .)) }}
 

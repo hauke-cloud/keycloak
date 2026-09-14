@@ -60,3 +60,10 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Strip scheme, port and path from a hostname URL (e.g. https://id.example.com:8443/auth -> id.example.com)
+*/}}
+{{- define "keycloak.host" -}}
+{{- regexReplaceAll "[:/].*$" (regexReplaceAll "^https?://" . "") "" }}
+{{- end }}
